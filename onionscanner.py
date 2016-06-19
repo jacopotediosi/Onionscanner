@@ -6,6 +6,19 @@ from threading import Thread
 socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS4, '127.0.0.1', 9050, True)
 socket.socket = socks.socksocket
 
+#Styling
+class color:
+   PURPLE = '\033[95m'
+   CYAN = '\033[96m'
+   DARKCYAN = '\033[36m'
+   BLUE = '\033[94m'
+   GREEN = '\033[92m'
+   YELLOW = '\033[93m'
+   RED = '\033[91m'
+   BOLD = '\033[1m'
+   UNDERLINE = '\033[4m'
+   END = '\033[0m'
+
 #Banner
 print '''
    ____        _                _____                                 
@@ -24,13 +37,18 @@ def onionCheck(onionurl):
 	try:
 		response = urllib2.urlopen("http://%s.onion" % onionurl).read()
 		soup = BeautifulSoup(response)
-		with open("list.txt", "a") as myfile:
-			myfile.write("http://"+onionurl+".onion -"+soup.title.string+"\n")
-		print(onionurl+".onion ("+soup.title.string+") is UP :)")
+		try:
+			with open("list.txt", "a") as myfile:
+				myfile.write("http://"+onionurl+".onion - "+soup.title.string+"\n")
+			print color.BOLD + "[+] http://"+onionurl+".onion - "+soup.title.string+" is UP :)" + color.END
+		except:
+			with open("list.txt", "a") as myfile:
+				myfile.write("http://"+onionurl+".onion - No title\n")
+			print color.BOLD + "[+] http://"+onionurl+".onion - No title is UP :)" + color.END
 	except urllib2.HTTPError, e:
-		print onionurl+".onion is down :("
+		print color.RED + "[+] http://"+onionurl+".onion is down :(" + color.END
 	except urllib2.URLError, e:
-		print onionurl+".onion is down :("
+		print color.RED + "[+] http://"+onionurl+".onion is down :(" + color.END
 
 #Check if tor is running
 try:
@@ -78,7 +96,7 @@ try:
 				try:
 					rthreads = [t.join(1) for t in rthreads if t is not None and t.isAlive()]
 				except KeyboardInterrupt:
-					print "\nExiting threads...\n"
+					print color.BOLD + "\nExiting threads...\n" + color.END
 					for t in rthreads:
 						stop_now = True
 						t.running = False
@@ -93,5 +111,5 @@ try:
 			onionCheck(randomword)
 
 except urllib2.URLError, e:
-	print "You must activate Tor before running this tool!"
+	print color.BOLD + "[+] You must activate Tor before running this tool!" + color.END
 
