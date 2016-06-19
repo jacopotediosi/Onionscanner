@@ -20,61 +20,78 @@ print '''
 
 import urllib2
 
-global stop_now, start, threads
-stop_now 	= 	False
-start		=	0
-threads 	= 	input("Threads: ")
+def onionCheck(onionurl):
+	try:
+		response = urllib2.urlopen("http://%s.onion" % onionurl).read()
+		soup = BeautifulSoup(response)
+		with open("list.txt", "a") as myfile:
+			myfile.write("http://"+onionurl+".onion -"+soup.title.string+"\n")
+		print(onionurl+".onion ("+soup.title.string+") is UP :)")
+	except urllib2.HTTPError, e:
+		print onionurl+".onion is down :("
+	except urllib2.URLError, e:
+		print onionurl+".onion is down :("
 
-class httpPost(Thread):
-	def __init__(self):
-		Thread.__init__(self)
-		self.running = True
+#Check if tor is running
+try:
+	print "Checking if tor is running..."
+	ret = urllib2.urlopen('http://www.google.com')
+	#Scan mode (random, from file)
+	mode		=	input("1. Random strings\n2. From file\nChoose: ")
+	if mode == 1:
+		global stop_now, start, threads
+		stop_now 	= 	False
+		start		=	0
+		threads 	= 	input("Threads: ")
+		class httpPost(Thread):
+			def __init__(self):
+				Thread.__init__(self)
+				self.running = True
 
-	def _send_http_post(self, pause=10):
-		global stop_now, start
+			def _send_http_post(self, pause=10):
+				global stop_now, start
+				#Http request
+				start_locale=start
+				start+=1
+				time.sleep(random.uniform(0.1, 5))
+				randomword=''.join(random.choice(string.lowercase + string.digits) for n in range(16))
+				onionCheck(randomword)
+				for i in range(0, 9999):
+					if stop_now:
+						self.running = False
+						break
 
-		#Http request
-		start_locale=start
-		start+=1
-		time.sleep(random.uniform(0.1, 5))
-		randomword=''.join(random.choice(string.lowercase + string.digits) for n in range(16))
-		try:
-			response = urllib2.urlopen("http://%s.onion" % randomword).read()
-			soup = BeautifulSoup(response)
-			with open("list.txt", "a") as myfile:
-				myfile.write("http://"+randomword+".onion -"+soup.title.string+"\n")
-			print("http://"+randomword+".onion ("+soup.title.string+") is UP :)")
-		except urllib2.HTTPError, e:
-			print randomword+" is down :("
-		except urllib2.URLError, e:
-			print randomword+" is down :("
+			def run(self):
+				while self.running:
+						self._send_http_post()
 
-		for i in range(0, 9999):
-			if stop_now:
-				self.running = False
-				break
+		def main():
+			global stop_now, thread
 
-	def run(self):
-		while self.running:
-				self._send_http_post()
+			rthreads = []
+			for i in range(threads):
+				t = httpPost()
+				rthreads.append(t)
+				t.start()
 
-def main():
-	global stop_now, thread
-	
-	rthreads = []
-	for i in range(threads):
-		t = httpPost()
-		rthreads.append(t)
-		t.start()
+			while len(rthreads) > 0:
+				try:
+					rthreads = [t.join(1) for t in rthreads if t is not None and t.isAlive()]
+				except KeyboardInterrupt:
+					print "\nExiting threads...\n"
+					for t in rthreads:
+						stop_now = True
+						t.running = False
 
-	while len(rthreads) > 0:
-		try:
-			rthreads = [t.join(1) for t in rthreads if t is not None and t.isAlive()]
-		except KeyboardInterrupt:
-			print "\nExiting threads...\n"
-			for t in rthreads:
-				stop_now = True
-				t.running = False
+		if __name__ == "__main__":
+			main()
+	elif mode == 2:
+		filename = raw_input("Input file: ")
+		f = open("%s" % filename, "r")
+		for line in f:
+			randomword = line.rstrip()
+			onionCheck(randomword)
 
-if __name__ == "__main__":
-	main()
+except urllib2.URLError, e:
+	print "You must activate Tor before running this tool!"
+
