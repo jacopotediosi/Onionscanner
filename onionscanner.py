@@ -34,15 +34,15 @@ def onionCheck(onionurl):
 		try:
 			with open("list.txt", "a") as myfile:
 				myfile.write("http://"+onionurl+".onion - "+soup.title.string+"\n")
-			print color.BOLD + "[+] http://"+onionurl+".onion - "+soup.title.string+" is UP :)" + color.END
+			sys.stdout.write( color.BOLD + "[+] http://"+onionurl+".onion - "+soup.title.string+" is UP :)" + color.END + "\n" )
 		except:
 			with open("list.txt", "a") as myfile:
 				myfile.write("http://"+onionurl+".onion - No title\n")
-			print color.BOLD + "[+] http://"+onionurl+".onion - No title is UP :)" + color.END
+			sys.stdout.write( color.BOLD + "[+] http://"+onionurl+".onion - No title is UP :)" + color.END + "\n" )
 	except urllib2.HTTPError, e:
-		print color.RED + "[+] http://"+onionurl+".onion is down :(" + color.END
+		sys.stdout.write( color.RED + "[+] http://"+onionurl+".onion is down :(" + color.END + "\n" )
 	except urllib2.URLError, e:
-		print color.RED + "[+] http://"+onionurl+".onion is down :(" + color.END
+		sys.stdout.write( color.RED + "[+] http://"+onionurl+".onion is down :(" + color.END + "\n" )
 
 #Check if tor is running
 try:
@@ -68,7 +68,7 @@ try:
 			while True:
 				time.sleep(1)
 		except KeyboardInterrupt:
-			print color.BOLD + "\n[+] Exiting ...\n" + color.END
+			sys.stdout.write( color.BOLD + "\n[+] Exiting ...\n" + color.END + "\n" )
 	elif mode == 2:
 		filename = raw_input("Input file: ")
 		f = open("%s" % filename, "r")
@@ -76,8 +76,8 @@ try:
 			randomword = line.rstrip()
 			onionCheck(randomword)
 	else:
-		print color.BOLD + "[+] Insert 1 or 2, exiting...\n" + color.END
+		sys.stdout.write( color.BOLD + "[+] Insert 1 or 2, exiting...\n" + color.END + "\n" )
 
 except urllib2.URLError, e:
-	print color.BOLD + "[+] You must activate Tor before running this tool!\n" + color.END
+	sys.stdout.write( color.BOLD + "[+] You must activate Tor before running this tool!\n" + color.END + "\n" )
 
