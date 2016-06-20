@@ -1,8 +1,6 @@
 """SocksiPy - Python SOCKS module.
 Version 1.00
-
 Copyright 2006 Dan-Haim. All rights reserved.
-
 Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 1. Redistributions of source code must retain the above copyright notice, this
@@ -23,11 +21,8 @@ LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA
 OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
 LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
 OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMANGE.
-
-
 This module provides a standard socket-like interface for Python
 for tunneling connections through SOCKS proxies.
-
 """
 
 import socket
